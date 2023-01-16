@@ -1,0 +1,33 @@
+.centralize-header-text {
+    margin: 0 auto;
+}
+
+div.top-space {
+    position: relative;
+    padding-top: 1em;
+}
+
+input[type="number"] {
+    text-align: center;
+}
+
+.mat-table {
+    overflow-x: scroll;
+    display: table;
+    width: 100%;
+}
+
+.mat-cell,
+.mat-header-cell {
+    word-wrap: initial;
+    display: table-cell;
+    padding: 0px 5px 5px 5px;
+    width: auto; 
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.mat-row,
+.mat-header-row {
+    display: table-row;
+}
