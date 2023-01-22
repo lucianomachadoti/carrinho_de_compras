@@ -1,8 +1,13 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
 
 import { Cart, CartProduct } from '../model/cart';
 import { Product } from '../model/product';
+
+export enum IncDec {
+  INC = "inc",
+  DEC = "dec"
+}
 
 @Component({
   selector: 'app-shop-cart',
@@ -21,9 +26,7 @@ export class ShopChartComponent implements OnInit {
   userCart: Cart = {id: 0, products: []};
 
   displayedCartListColumns: string[] = ['itemNumber', 'productName', 'singleUnitPrice', 'amount', 'totalItemPrice', 'actions'];
-  cartProductListDS: CartProduct[] = [];
-
-  constructor(public dialog: MatDialog) {}
+  cartProductListDS = new MatTableDataSource<CartProduct>();// : CartProduct[] = [];
 
   ngOnInit(): void {
     this.productList = [
@@ -33,39 +36,38 @@ export class ShopChartComponent implements OnInit {
     ];
 
     this.productListDS = this.productList;
-
-    this.userCart = {
-      id: 1,
-      products: [
-        { cartProduct: { id: 1, name: "Sabão", price: 2.35 } as Product, amount: 1, totalItemValue: 1.0 } as CartProduct,
-        { cartProduct: { id: 2, name: "Agua", price: 3.76 } as Product, amount: 1, totalItemValue: 1.0 } as CartProduct,
-      ] as CartProduct[],
-      totalCartRawValue: 0,
-      totalCartFinalPrice: 0
-    };
-
-    this.cartProductListDS = this.userCart.products;
+    this.updateCartDataSource();
   }
 
   addProduct(productToAdd: Product) {
-
+    console.log(productToAdd);
+    
+    this.userCart.products.push({ cartProduct: productToAdd, amount: 1, totalItemValue: productToAdd.price });
+    this.updateCartDataSource();
   }
 
-  public incAmount(cartProd: CartProduct, value: string) {
+  public changeAmount(cartProd: CartProduct, value: string, incDec: string): void {
     let paramNumber = +value;
-    paramNumber++;
+    if (incDec === IncDec.INC) {
+      paramNumber++;
+    } else if (incDec === IncDec.DEC && paramNumber > 1) {
+      paramNumber--;
+    }
     let foundItem = this.userCart.products.findIndex(product => product.cartProduct.id == cartProd.cartProduct.id);
     this.userCart.products[foundItem].amount = paramNumber;
   }
 
-  public decNumber(value: string): string {
-    let paramNumber = +value;
-    paramNumber--;
-    return paramNumber.toString();
+  removeProduct(productId: CartProduct) {
+    console.log(productId);
+    let index = this.userCart.products.indexOf(productId);
+    if (index > -1) {
+      this.userCart.products.splice(index, 1);
+    }
+    this.updateCartDataSource();
   }
 
-  removeProduct(productId: string) {
-    console.log(productId);
+  updateCartDataSource() {
+    this.cartProductListDS.data = this.userCart.products;
   }
 
 }
