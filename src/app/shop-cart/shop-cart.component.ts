@@ -26,7 +26,7 @@ export class ShopChartComponent implements OnInit {
   userCart: Cart = {id: 0, products: []};
 
   displayedCartListColumns: string[] = ['itemNumber', 'productName', 'singleUnitPrice', 'amount', 'totalItemPrice', 'actions'];
-  cartProductListDS = new MatTableDataSource<CartProduct>();// : CartProduct[] = [];
+  cartProductListDS = new MatTableDataSource<CartProduct>();
 
   ngOnInit(): void {
     this.productList = [
