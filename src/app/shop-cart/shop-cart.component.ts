@@ -3,6 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 
 import { Cart, CartProduct } from '../model/cart';
 import { Product } from '../model/product';
+import { ShopCartService } from './shop-cart.service';
 
 export enum IncDec {
   INC = "inc",
@@ -16,26 +17,18 @@ export enum IncDec {
 })
 export class ShopChartComponent implements OnInit {
 
-  private productList: Array<Product> = [];
-  private cart: Cart[] = [];
-  private productAmount = "1";
+  userCart: Cart = {id: 0, products: []};
 
   displayedProductListColumns: string[] = ['id', 'name', 'price', 'actions'];
-  productListDS = this.productList;
-
-  userCart: Cart = {id: 0, products: []};
+  productListDS = new MatTableDataSource<Product>();
 
   displayedCartListColumns: string[] = ['itemNumber', 'productName', 'singleUnitPrice', 'amount', 'totalItemPrice', 'actions'];
   cartProductListDS = new MatTableDataSource<CartProduct>();
 
-  ngOnInit(): void {
-    this.productList = [
-      { id: 1, name: "Sabão", price: 2.35 } as Product,
-      { id: 2, name: "Agua", price: 3.76 } as Product,
-      { id: 3, name: "Papel", price: 7.81 } as Product
-    ];
+  constructor(private service: ShopCartService) { }
 
-    this.productListDS = this.productList;
+  ngOnInit(): void {
+    this.productListDS.data = this.service.getAllProducts();
     this.updateCartDataSource();
   }
 
@@ -58,7 +51,6 @@ export class ShopChartComponent implements OnInit {
   }
 
   removeProduct(productId: CartProduct) {
-    console.log(productId);
     let index = this.userCart.products.indexOf(productId);
     if (index > -1) {
       this.userCart.products.splice(index, 1);
