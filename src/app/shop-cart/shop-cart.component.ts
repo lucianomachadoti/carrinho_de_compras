@@ -17,8 +17,6 @@ export enum IncDec {
 })
 export class ShopChartComponent implements OnInit {
 
-  userCart: Cart = {id: 0, products: []};
-
   displayedProductListColumns: string[] = ['id', 'name', 'price', 'actions'];
   productListDS = new MatTableDataSource<Product>();
 
@@ -33,9 +31,7 @@ export class ShopChartComponent implements OnInit {
   }
 
   addProduct(productToAdd: Product) {
-    console.log(productToAdd);
-    
-    this.userCart.products.push({ cartProduct: productToAdd, amount: 1, totalItemValue: productToAdd.price });
+    this.service.addProductToUserCart(productToAdd);
     this.updateCartDataSource();
   }
 
@@ -46,20 +42,16 @@ export class ShopChartComponent implements OnInit {
     } else if (incDec === IncDec.DEC && paramNumber > 1) {
       paramNumber--;
     }
-    let foundItem = this.userCart.products.findIndex(product => product.cartProduct.id == cartProd.cartProduct.id);
-    this.userCart.products[foundItem].amount = paramNumber;
+    this.service.changeProductAmount(cartProd, paramNumber);
   }
 
-  removeProduct(productId: CartProduct) {
-    let index = this.userCart.products.indexOf(productId);
-    if (index > -1) {
-      this.userCart.products.splice(index, 1);
-    }
+  removeProduct(productToRenmove: CartProduct) {
+    this.service.removeCartProduct(productToRenmove);
     this.updateCartDataSource();
   }
 
   updateCartDataSource() {
-    this.cartProductListDS.data = this.userCart.products;
+    this.cartProductListDS.data = this.service.getUserCart().products;
   }
 
 }
